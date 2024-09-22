@@ -1,0 +1,27 @@
+{
+  "type": "module",
+  "name": "@daldalso/next-typed-api",
+  "version": "0.8.0",
+  "description": "Type-safe API call library between Next.js routes and pages",
+  "repository": {
+    "url": "git+https://github.com/JJoriping/next-typed-api.git"
+  },
+  "author": "JJoriping",
+  "license": "MIT",
+  "scripts": {
+    "watch": "tsc -w",
+    "build": "tsc"
+  },
+  "files": [
+    "/LICENSE",
+    "/README.md",
+    "/dist/"
+  ],
+  "devDependencies": {
+    "@daldalso/eslint-plugin": "^1.2.3",
+    "@types/node": "^22.4.0",
+    "eslint": "^9.9.0",
+    "typescript": "^5.5.4"
+  },
+  "packageManager": "yarn@4.5.0"
+}
