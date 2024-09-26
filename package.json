@@ -12,16 +12,26 @@
     "watch": "tsc -w",
     "build": "tsc"
   },
+  "exports": {
+    ".": "./dist/index.js",
+    "./plugin": "./dist/plugin.js"
+  },
   "files": [
     "/LICENSE",
     "/README.md",
     "/dist/"
   ],
+  "dependencies": {
+    "webpack": "^5.95.0"
+  },
   "devDependencies": {
     "@daldalso/eslint-plugin": "^1.2.3",
     "@types/node": "^22.4.0",
     "eslint": "^9.9.0",
     "typescript": "^5.5.4"
+  },
+  "peerDependencies": {
+    "next": "^14"
   },
   "packageManager": "yarn@4.5.0"
 }
