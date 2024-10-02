@@ -10,7 +10,8 @@
   "license": "MIT",
   "scripts": {
     "watch": "tsc -w",
-    "build": "tsc"
+    "build": "tsc",
+    "test": "node --test"
   },
   "exports": {
     ".": "./dist/index.js",
@@ -26,15 +27,16 @@
     "@types/node": "^22.4.0",
     "eslint": "^9.9.0",
     "next": "^14",
+    "typescript": "^5",
     "webpack": "^5.95.0"
   },
   "peerDependencies": {
-    "next": "^14",
-    "typescript": "^5"
+    "next": "^14"
   },
   "packageManager": "yarn@4.5.0",
   "dependencies": {
-    "typescript": "^5",
+    "@daldalso/logger": "^0.9.3-0",
+    "ts-morph": "^23.0.0",
     "watcher": "^2.3.1"
   }
 }
