@@ -1,6 +1,9 @@
 import daldalsoPlugin from "@daldalso/eslint-plugin";
 
 export default [
+  {
+    ignores: [ "res/" ]
+  },
   daldalsoPlugin.configs.all,
   {
     rules: {

@@ -34,7 +34,7 @@ export default class NextTypedAPIPlugin{
       for(const v of paths){
         const relativePath = relative(dir, v);
         const fileName = getFileName(relativePath) + ".d.ts";
-        if(!existsSync(v)){
+        if(!existsSync(v) && existsSync(resolve(types, fileName))){
           unlinkSync(resolve(types, fileName));
           continue;
         }

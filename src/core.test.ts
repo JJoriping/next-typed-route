@@ -1,8 +1,8 @@
 import test from "node:test";
-import { generateEndpoint, initialize } from "./core.js";
 import { resolve } from "path";
+import { generateEndpoint, initialize } from "./core.js";
 
 initialize(resolve());
 test("generateEndpoint(path)", () => {
-  generateEndpoint("test", resolve("res/test-1.ts"));
+  console.log(generateEndpoint('foo/[bar]', resolve("res/test-1.ts")));
 });
