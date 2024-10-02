@@ -5,7 +5,11 @@ import { Project, SyntaxKind } from "ts-morph";
 
 const appRouterKeywords = [ "GET", "HEAD", "POST", "PUT", "DELETE", "PATCH", "OPTIONS" ];
 const typeTextPattern = /@daldalso\/next-typed-api\b/;
-const dynamicSegmentPattern = /\[]/;
+const dynamicSegmentPatterns = {
+  normal: /\[(\w+?)]/g,
+  catchAll: /\[\.{3}(\w+?)]/g,
+  optionalCatchAll: /\[\[\.{3}(\w+?)]]/g
+};
 
 let project:Project;
 
@@ -65,7 +69,21 @@ export function generateEndpoint(key:string, path:string):string|undefined{
   }
   return undefined;
 }
-function getParametersType(key:string):string{
-  // TODO
+export function getParametersType(key:string):string{
+  const R:Record<string, string|string[]> = {};
+
+  key.replace(dynamicSegmentPatterns.optionalCatchAll, (_, g1:string) => {
+    R[g1] = "string[]|undefined";
+    return "*";
+  }).replace(dynamicSegmentPatterns.catchAll, (_, g1:string) => {
+    R[g1] = "string[]";
+    return "*";
+  }).replace(dynamicSegmentPatterns.normal, (_, g1:string) => {
+    R[g1] = "string";
+    return "*";
+  });
+  if(Object.keys(R).length){
+    return JSON.stringify(R);
+  }
   return "never";
 }
