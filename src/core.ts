@@ -58,7 +58,7 @@ export function generateEndpoint(key:string, path:string):string|undefined{
       }
       const [ requestType, responseType ] = typeNode.getTypeArguments();
 
-      R.push(`    '${k} /${key}':Endpoint<${requestType ? requestType.getText() : "never"}, ${responseType ? responseType.getText() : "never"}, ${parametersType}>;`);
+      R.push(`    '${k} /${key}':Endpoint<${requestType ? requestType.getText() : "unknown"}&{ params: ${parametersType} }, ${responseType ? responseType.getText() : "void"}>;`);
       accepted = true;
     }
   }
@@ -70,7 +70,7 @@ export function generateEndpoint(key:string, path:string):string|undefined{
   return undefined;
 }
 export function getParametersType(key:string):string{
-  const R:Record<string, string|string[]> = {};
+  const R:Record<string, string> = {};
 
   key.replace(dynamicSegmentPatterns.optionalCatchAll, (_, g1:string) => {
     R[g1] = "string[]|undefined";
@@ -83,7 +83,7 @@ export function getParametersType(key:string):string{
     return "*";
   });
   if(Object.keys(R).length){
-    return JSON.stringify(R);
+    return "{" + Object.entries(R).map(([ k, v ]) => `'${k}':${v}`).join(',') + "}";
   }
-  return "never";
+  return "unknown";
 }

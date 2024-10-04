@@ -5,6 +5,8 @@ import { existsSync, mkdirSync, readdirSync, statSync, unlinkSync, writeFileSync
 import { relative, resolve } from "path";
 import { generateEndpoint, initialize } from "./core.js";
 
+const keyIgnorancePattern = /^\(.+?\)$/;
+
 export default class NextTypedAPIPlugin{
   public apply(compiler:Compiler):void{
     if(compiler.options.name !== 'server') return;
@@ -55,6 +57,9 @@ function getKey(value:string):string{
 
   chunk.pop();
   for(const v of chunk){
+    if(keyIgnorancePattern.test(v)){
+      continue;
+    }
     R.push(v);
   }
   return R.join('/');

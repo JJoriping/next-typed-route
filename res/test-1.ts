@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { NextTypedAPI } from "../src/index";
-import type { WriteStream } from "fs";
 
-type Test = { hello: number[], a: typeof process.env, b: WriteStream };
-interface Test2{ foo: number };
-export const GET:NextTypedAPI<{ body: Test }, Test2> = () => NextResponse.json({ foo: Math.random() });
+type TestRequest = "r1"|"r2[]"|"r3[]"|"o1?"|"o2?";
+interface TestResponse{ foo: number };
+export const GET:NextTypedAPI<{ query: TestRequest }, TestResponse> = req => {
+  return NextResponse.json({ foo: Math.random() });
+};
+export const POST:NextTypedAPI<{ body: number }, { result: boolean }> = req => {
+  return NextResponse.json({ result: true });
+};
