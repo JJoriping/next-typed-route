@@ -7,7 +7,7 @@ import { generateEndpoint, initialize } from "./core.js";
 
 const keyIgnorancePattern = /^\(.+?\)$/;
 
-export default class NextTypedAPIPlugin{
+export default class NextTypedRoutePlugin{
   public apply(compiler:Compiler):void{
     if(compiler.options.name !== 'server') return;
     const nextTypesPlugin = compiler.options.plugins.find(v => v instanceof NextTypesPlugin) as NextTypesPlugin|undefined;

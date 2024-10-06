@@ -32,7 +32,7 @@ interface TypedURLSearchParams<T extends string>{
   getAll(name:T extends `${infer R}[]` ? R : never):string[];
 }
 
-export type NextTypedAPI<Req = DefaultRequestObject, Res = void> = (
+export type NextTypedRoute<Req = DefaultRequestObject, Res = void> = (
   req:Omit<NextRequest, 'json'|'nextUrl'>&{
     'json': () => Promise<Req extends { 'body': infer R } ? R : never>,
     'nextUrl': Omit<NextURL, 'searchParams'>&{
@@ -45,7 +45,10 @@ export type NextTypedAPI<Req = DefaultRequestObject, Res = void> = (
 export interface NextRoutingTable{}
 export type Endpoint<Req, Res> = { 'req': Req, 'res': Res };
 
-export default async function callAPI<T extends keyof NextRoutingTable>(path:T, ...args:RequestArgumentsOf<T>):Promise<NextRoutingTable[T]['res']>{
+export default function callAPI<T extends keyof NextRoutingTable>(path:T, ...args:RequestArgumentsOf<T>):Promise<NextRoutingTable[T]['res']>{
+  return callRawAPI(path, ...args).then(res => res.json());
+}
+export function callRawAPI<T extends keyof NextRoutingTable>(path:T, ...args:RequestArgumentsOf<T>):Promise<Response>{
   let method:string, url:string|URL;
   [ method, url ] = (path as string).split(' ');
   const requestObject = args[0] as Record<string, any>|undefined;
@@ -86,5 +89,5 @@ export default async function callAPI<T extends keyof NextRoutingTable>(path:T, 
     method,
     body: requestObject?.['body'],
     ...fetchOptions
-  }).then(res => res.json());
+  });
 }

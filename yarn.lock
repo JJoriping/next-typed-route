@@ -62,9 +62,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@daldalso/next-typed-api@workspace:.":
+"@daldalso/next-typed-route@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@daldalso/next-typed-api@workspace:."
+  resolution: "@daldalso/next-typed-route@workspace:."
   dependencies:
     "@daldalso/eslint-plugin": "npm:^1.2.3"
     "@daldalso/logger": "npm:^0.9.3-0"
