@@ -3,9 +3,10 @@ import { NextTypesPlugin } from "next/dist/build/webpack/plugins/next-types-plug
 import Watcher from "watcher";
 import { existsSync, mkdirSync, readdirSync, statSync, unlinkSync, writeFileSync } from "fs";
 import { relative, resolve } from "path";
-import { generateEndpoint, initialize } from "./core.js";
+import { generateEndpointDefinition, generatePageDefinition, initialize } from "./core.js";
 
 const keyIgnorancePattern = /^\(.+?\)$/;
+const pageFilePattern = /(?:^|[\\/])page\.(?:jsx?|tsx?)$/;
 
 export default class NextTypedRoutePlugin{
   public apply(compiler:Compiler):void{
@@ -44,7 +45,13 @@ export default class NextTypedRoutePlugin{
           run(...readdirSync(v).map(w => resolve(v, w)));
           continue;
         }
-        const R = generateEndpoint(getKey(relativePath), v);
+        let R:string|undefined;
+        console.log(relativePath);
+        if(pageFilePattern.test(relativePath)){
+          R = generatePageDefinition(getKey(relativePath), v);
+        }else{
+          R = generateEndpointDefinition(getKey(relativePath), v);
+        }
         if(!R) continue;
         writeFileSync(resolve(types, fileName), R);
       }

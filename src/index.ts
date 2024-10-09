@@ -1,36 +1,8 @@
 /* eslint-disable unicorn/prevent-abbreviations */
 import type { NextURL } from "next/dist/server/web/next-url.js";
 import type { NextRequest, NextResponse } from "next/server.js";
-
-type DefaultRequestObject = {
-  'query': never,
-  'body': never
-};
-type CallAPIOptions = Omit<RequestInit, 'method'|'body'>&{
-  'host'?: string
-};
-type RequestArgumentsOf<T extends keyof NextRoutingTable> = unknown extends NextRoutingTable[T]['req']
-  ? [requestObject?:{ 'options': CallAPIOptions }]
-  : [
-    requestObject:{
-      [key in keyof NextRoutingTable[T]['req'] as unknown extends NextRoutingTable[T]['req'][key] ? never : key]: key extends "query"
-          ? QueryObjectOf<NextRoutingTable[T]['req'][key]>
-          : NextRoutingTable[T]['req'][key]
-    }&{ 'options'?: CallAPIOptions }
-  ]
-;
-type QueryObjectOf<T extends string> = {
-  [key in T as key extends `${string}?`|`${string}[]` ? never : key]: string
-}&{
-  [key in T as key extends `${infer R}[]` ? R : never]: string[]
-}&{
-  [key in T as key extends `${infer R}?` ? R : never]?: string
-};
-interface TypedURLSearchParams<T extends string>{
-  get(name:Exclude<T, `${string}[]`|`${string}?`>):string;
-  get(name:T extends `${infer R}?` ? R : never):string|null;
-  getAll(name:T extends `${infer R}[]` ? R : never):string[];
-}
+import type { ReactNode } from "react";
+import type { CallAPIOptions, DefaultRequestObject, RequestArgumentsOf } from "./types.js";
 
 export type NextTypedRoute<Req = DefaultRequestObject, Res = void> = (
   req:Omit<NextRequest, 'json'|'nextUrl'>&{
@@ -41,14 +13,23 @@ export type NextTypedRoute<Req = DefaultRequestObject, Res = void> = (
   },
   params:Record<string, string|string[]>
 ) => NextResponse<Res>|Promise<NextResponse<Res>>;
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface NextRoutingTable{}
-export type Endpoint<Req, Res> = { 'req': Req, 'res': Res };
+export type NextTypedPage<Page extends keyof NextPageTable, P extends { 'query'?: string } = {}> = (props:P&NextPageTable[Page]) => ReactNode;
 
-export default function callAPI<T extends keyof NextRoutingTable>(path:T, ...args:RequestArgumentsOf<T>):Promise<NextRoutingTable[T]['res']>{
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface NextEndpointTable{}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface NextPageTable{}
+export type Endpoint<Req, Res> = { 'req': Req, 'res': Res };
+export interface TypedURLSearchParams<T extends string>{
+  get(name:Exclude<T, `${string}[]`|`${string}?`>):string;
+  get(name:T extends `${infer R}?` ? R : never):string|null;
+  getAll(name:T extends `${infer R}[]` ? R : never):string[];
+}
+
+export default function callAPI<T extends keyof NextEndpointTable>(path:T, ...args:RequestArgumentsOf<T>):Promise<NextEndpointTable[T]['res']>{
   return callRawAPI(path, ...args).then(res => res.json());
 }
-export function callRawAPI<T extends keyof NextRoutingTable>(path:T, ...args:RequestArgumentsOf<T>):Promise<Response>{
+export function callRawAPI<T extends keyof NextEndpointTable>(path:T, ...args:RequestArgumentsOf<T>):Promise<Response>{
   let method:string, url:string|URL;
   [ method, url ] = (path as string).split(' ');
   const requestObject = args[0] as Record<string, any>|undefined;

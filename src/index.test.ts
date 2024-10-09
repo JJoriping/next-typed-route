@@ -3,7 +3,7 @@ import { callRawAPI } from "./index.js";
 import assert from "node:assert";
 
 declare module "./index.js"{
-  interface NextRoutingTable{
+  interface NextEndpointTable{
     'GET /[slug]/test':Endpoint<{ query: "r1"|"r2[]"|"r3[]"|"o1?"|"o2?" }&{ params: {'slug': string} }, void>;
   }
 }
