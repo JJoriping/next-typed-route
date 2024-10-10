@@ -17,7 +17,7 @@ export type RequestArgumentsOf<T extends keyof NextEndpointTable> = unknown exte
     }&{ 'options'?: CallAPIOptions }
   ]
 ;
-export type QueryObjectOf<T extends string> = {
+type QueryObjectOf<T extends string> = {
   [key in T as key extends `${string}?`|`${string}[]` ? never : key]: string
 }&{
   [key in T as key extends `${infer R}[]` ? R : never]: string[]

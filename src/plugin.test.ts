@@ -1,6 +1,6 @@
 import { resolve } from "node:path";
 import test from "node:test";
-import { readFileSync } from "node:fs";
+import { readFileSync, rmSync } from "node:fs";
 import assert from "node:assert";
 import type { Compiler } from "webpack";
 import { NextTypesPlugin } from "next/dist/build/webpack/plugins/next-types-plugin/index.js";
@@ -30,7 +30,7 @@ test("NextTypedRoutePlugin", () => {
     } as any
   } as Compiler);
 
-  // rmSync(resolve(".next"), { recursive: true });;
+  rmSync(resolve(".next"), { recursive: true });
 });
 function assertFileContent(path:string, pattern:string|RegExp):void{
   const content = readFileSync(path).toString();

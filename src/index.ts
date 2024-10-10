@@ -8,12 +8,12 @@ export type NextTypedRoute<Req = DefaultRequestObject, Res = void> = (
   req:Omit<NextRequest, 'json'|'nextUrl'>&{
     'json': () => Promise<Req extends { 'body': infer R } ? R : never>,
     'nextUrl': Omit<NextURL, 'searchParams'>&{
-      'searchParams': Req extends { 'query': infer R extends string } ? TypedURLSearchParams<R> : never
+      'searchParams': Req extends { 'query': TypedURLSearchParams<infer R> } ? TypedURLSearchParams<R> : never
     }
   },
   params:Record<string, string|string[]>
 ) => NextResponse<Res>|Promise<NextResponse<Res>>;
-export type NextTypedPage<Page extends keyof NextPageTable, P extends { 'query'?: string } = {}> = (props:P&NextPageTable[Page]) => ReactNode;
+export type NextTypedPage<Page extends keyof NextPageTable, Q extends string = never, P = {}> = (props:P&Pick<NextPageTable[Page], 'params'>) => ReactNode;
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface NextEndpointTable{}

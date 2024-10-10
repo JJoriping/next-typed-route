@@ -1,7 +1,7 @@
 import type { Compiler } from "webpack";
 import { NextTypesPlugin } from "next/dist/build/webpack/plugins/next-types-plugin/index.js";
 import Watcher from "watcher";
-import { existsSync, mkdirSync, readdirSync, statSync, unlinkSync, writeFileSync } from "fs";
+import { copyFileSync, existsSync, mkdirSync, readdirSync, statSync, unlinkSync, writeFileSync } from "fs";
 import { relative, resolve } from "path";
 import { generateEndpointDefinition, generatePageDefinition, initialize } from "./core.js";
 
@@ -20,6 +20,7 @@ export default class NextTypedRoutePlugin{
 
     initialize(compiler.context);
     mkdirSync(types, { recursive: true });
+    copyFileSync(resolve(import.meta.dirname, "../res/next.d.ts"), resolve(types, "next.d.ts"));
     if(compiler.options.mode === "production"){
       run(dir);
     }else{
@@ -46,7 +47,6 @@ export default class NextTypedRoutePlugin{
           continue;
         }
         let R:string|undefined;
-        console.log(relativePath);
         if(pageFilePattern.test(relativePath)){
           R = generatePageDefinition(getKey(relativePath), v);
         }else{
