@@ -16,7 +16,7 @@ export default class NextTypedRoutePlugin{
     const routerType = existsSync(nextTypesPlugin.appDir) ? "appDir" : "pagesDir";
     const dir = nextTypesPlugin[routerType];
     const outputPath = resolve(compiler.context, ".next/types");
-    const types = resolve(outputPath, "./next-typed-api");
+    const types = resolve(outputPath, "./next-typed-route");
 
     initialize(compiler.context);
     mkdirSync(types, { recursive: true });

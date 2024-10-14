@@ -1,4 +1,4 @@
-import type { NextEndpointTable } from "./index.js";
+import type { NextEndpointTable, NextPageTable } from "./index.js";
 
 export type DefaultRequestObject = {
   'query': never,
@@ -7,7 +7,7 @@ export type DefaultRequestObject = {
 export type CallAPIOptions = Omit<RequestInit, 'method'|'body'>&{
   'host'?: string
 };
-export type RequestArgumentsOf<T extends keyof NextEndpointTable> = unknown extends NextEndpointTable[T]['req']
+export type CallAPIArgumentsOf<T extends keyof NextEndpointTable> = unknown extends NextEndpointTable[T]['req']
   ? [requestObject?:{ 'options': CallAPIOptions }]
   : [
     requestObject:{
@@ -24,3 +24,7 @@ type QueryObjectOf<T extends string> = {
 }&{
   [key in T as key extends `${infer R}?` ? R : never]?: string
 };
+export type PageArgumentsOf<T extends keyof NextPageTable> = unknown extends NextPageTable[T]['params']
+  ? [query?:QueryObjectOf<NextPageTable[T]['query']>]
+  : [params:NextPageTable[T]['params'], query?:QueryObjectOf<NextPageTable[T]['query']>]
+;

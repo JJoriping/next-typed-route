@@ -4,7 +4,7 @@
   "version": "0.8.0",
   "description": "Type-safe API call and routing library for Next.js",
   "repository": {
-    "url": "git+https://github.com/JJoriping/next-typed-api.git"
+    "url": "git+https://github.com/JJoriping/next-typed-route.git"
   },
   "author": "JJoriping",
   "license": "MIT",
@@ -20,7 +20,8 @@
   "files": [
     "/LICENSE",
     "/README.md",
-    "/dist/"
+    "/dist/",
+    "!/dist/**/*.test.js"
   ],
   "devDependencies": {
     "@daldalso/eslint-plugin": "^1.2.3",
