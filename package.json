@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@daldalso/next-typed-route",
-  "version": "0.8.0",
+  "version": "0.8.0-1",
   "description": "Type-safe API call and routing library for Next.js",
   "repository": {
     "url": "git+https://github.com/JJoriping/next-typed-route.git"
@@ -21,7 +21,8 @@
     "/LICENSE",
     "/README.md",
     "/dist/",
-    "!/dist/**/*.test.js"
+    "/res/next.d.ts",
+    "!/dist/**/*.test.{d.ts,js}"
   ],
   "devDependencies": {
     "@daldalso/eslint-plugin": "^1.2.3",
