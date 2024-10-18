@@ -10,7 +10,7 @@ const plugin = new NextTypedRoutePlugin();
 
 test("NextTypedRoutePlugin", () => {
   plugin.apply({
-    context: "",
+    context: resolve("res/testbed"),
     options: {
       name: "server",
       mode: "production",
@@ -32,6 +32,7 @@ test("NextTypedRoutePlugin", () => {
 
   rmSync(resolve(".next"), { recursive: true });
 });
+
 function assertFileContent(path:string, pattern:string|RegExp):void{
   const content = readFileSync(path).toString();
 
