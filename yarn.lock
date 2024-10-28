@@ -70,6 +70,7 @@ __metadata:
     "@daldalso/logger": "npm:^0.9.3-0"
     "@types/node": "npm:^22.4.0"
     "@types/react": "npm:^18"
+    dotenv: "npm:^16"
     eslint: "npm:^9.9.0"
     next: "npm:^14"
     react: "npm:^18.3.1"
@@ -1255,6 +1256,13 @@ __metadata:
   dependencies:
     esutils: "npm:^2.0.2"
   checksum: 10c0/b6416aaff1f380bf56c3b552f31fdf7a69b45689368deca72d28636f41c16bb28ec3ebc40ace97db4c1afc0ceeb8120e8492fe0046841c94c2933b2e30a7d5ac
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^16":
+  version: 16.4.5
+  resolution: "dotenv@npm:16.4.5"
+  checksum: 10c0/48d92870076832af0418b13acd6e5a5a3e83bb00df690d9812e94b24aff62b88ade955ac99a05501305b8dc8f1b0ee7638b18493deb6fe93d680e5220936292f
   languageName: node
   linkType: hard
 

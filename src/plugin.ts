@@ -3,10 +3,11 @@ import { NextTypesPlugin } from "next/dist/build/webpack/plugins/next-types-plug
 import Watcher from "watcher";
 import { copyFileSync, existsSync, mkdirSync, readdirSync, statSync, unlinkSync, writeFileSync } from "fs";
 import { relative, resolve } from "path";
-import { generateEndpointDefinition, generatePageDefinition, initialize } from "./core.js";
+import { generateEndpointDefinition, generateEnvDefinition, generatePageDefinition, initialize } from "./core.js";
 
 const keyIgnorancePattern = /^\(.+?\)$/;
 const pageFilePattern = /(?:^|[\\/])page\.(?:jsx?|tsx?)$/;
+const envFilePattern = /^\.env(\..+)?$/;
 
 export default class NextTypedRoutePlugin{
   public apply(compiler:Compiler):void{
@@ -22,28 +23,35 @@ export default class NextTypedRoutePlugin{
     mkdirSync(types, { recursive: true });
     copyFileSync(resolve(import.meta.dirname, "../res/next.d.ts"), resolve(types, "next.d.ts"));
     if(compiler.options.mode === "production"){
-      run(dir);
+      runSrc(dir);
+      runEnv();
     }else{
-      const watcher = new Watcher(dir, { recursive: true, renameDetection: true });
+      const srcWatcher = new Watcher(dir, { recursive: true, renameDetection: true });
+      const envWatcher = new Watcher(compiler.context);
 
-      watcher.on('add', path => run(path));
-      watcher.on('addDir', path => run(path));
-      watcher.on('change', path => run(path));
-      watcher.on('rename', (before, after) => run(before, after));
-      watcher.on('renameDir', (before, after) => run(before, after));
-      watcher.on('unlink', path => run(path));
-      watcher.on('unlinkDir', path => run(path));
+      srcWatcher.on('add', path => runSrc(path));
+      srcWatcher.on('addDir', path => runSrc(path));
+      srcWatcher.on('change', path => runSrc(path));
+      srcWatcher.on('rename', (before, after) => runSrc(before, after));
+      srcWatcher.on('renameDir', (before, after) => runSrc(before, after));
+      srcWatcher.on('unlink', path => runSrc(path));
+      srcWatcher.on('unlinkDir', path => runSrc(path));
+
+      envWatcher.on('change', () => runEnv());
+      envWatcher.on('unlink', () => runEnv());
     }
-    function run(...paths:string[]):void{
+    function runSrc(...paths:string[]):void{
       for(const v of paths){
         const relativePath = relative(dir, v);
         const fileName = getFileName(relativePath) + ".d.ts";
-        if(!existsSync(v) && existsSync(resolve(types, fileName))){
-          unlinkSync(resolve(types, fileName));
+        if(!existsSync(v)){
+          if(existsSync(resolve(types, fileName))){
+            unlinkSync(resolve(types, fileName));
+          }
           continue;
         }
         if(statSync(v).isDirectory()){
-          run(...readdirSync(v).map(w => resolve(v, w)));
+          runSrc(...readdirSync(v).map(w => resolve(v, w)));
           continue;
         }
         let R:string|undefined;
@@ -53,6 +61,15 @@ export default class NextTypedRoutePlugin{
           R = generateEndpointDefinition(getKey(relativePath), v);
         }
         if(!R) continue;
+        writeFileSync(resolve(types, fileName), R);
+      }
+    }
+    function runEnv():void{
+      for(const v of readdirSync(compiler.context)){
+        if(!envFilePattern.test(v)) continue;
+        const fileName = getFileName(v) + ".d.ts";
+        const R = generateEnvDefinition(getKey(v), resolve(compiler.context, v));
+
         writeFileSync(resolve(types, fileName), R);
       }
     }
