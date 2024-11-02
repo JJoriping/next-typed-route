@@ -5,6 +5,9 @@ import type { ReactNode } from "react";
 import type { CallAPIOptions, DefaultRequestObject, CallAPIArgumentsOf, PageArgumentsOf } from "./types.js";
 import { dynamicSegmentPatterns } from "./constants.js";
 
+type NoSymbolOf<T> = {
+  [key in keyof T]: Exclude<T[key], symbol>
+};
 export type NextTypedRoute<Req = DefaultRequestObject, Res = void> = (
   req:Omit<NextRequest, 'json'|'nextUrl'>&{
     'json': () => Promise<Req extends { 'body': infer R } ? R : never>,
@@ -14,7 +17,14 @@ export type NextTypedRoute<Req = DefaultRequestObject, Res = void> = (
   },
   params:Record<string, string|string[]>
 ) => NextResponse<Res>|Promise<NextResponse<Res>>;
-export type NextTypedPage<Page extends keyof NextPageTable, Q extends string = never, P = {}> = (props:P&Pick<NextPageTable[Page], 'params'>) => ReactNode;
+// NOTE params and searchParams become Promise instances since Next.js 15!
+export type NextTypedPage<Page extends keyof NextPageTable, Q extends string = never, P = {}> = (props:P&{
+  'params': NoSymbolOf<NextPageTable[Page]['params']>
+}) => ReactNode;
+export type NextTypedLayout<Page extends keyof NextPageTable> = (props:{
+  'params': NoSymbolOf<NextPageTable[Page]['params']>,
+  'children': ReactNode
+}) => ReactNode;
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface NextEndpointTable{}

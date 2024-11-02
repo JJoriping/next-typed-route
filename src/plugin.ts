@@ -6,7 +6,7 @@ import { relative, resolve } from "path";
 import { generateEndpointDefinition, generateEnvDefinition, generatePageDefinition, initialize } from "./core.js";
 
 const keyIgnorancePattern = /^\(.+?\)$/;
-const pageFilePattern = /(?:^|[\\/])page\.(?:jsx?|tsx?)$/;
+const pageFilePattern = /(?:^|[\\/])(page|layout)\.(?:jsx?|tsx?)$/;
 const envFilePattern = /^\.env(\..+)?$/;
 
 export default class NextTypedRoutePlugin{
@@ -55,7 +55,14 @@ export default class NextTypedRoutePlugin{
           continue;
         }
         let R:string|undefined;
-        if(pageFilePattern.test(relativePath)){
+        const pageFileChunk = relativePath.match(pageFilePattern);
+
+        if(pageFileChunk){
+          if(pageFileChunk[1] === "layout" && paths.some(w => {
+            const otherFileChunk = relative(dir, w).match(pageFilePattern);
+            if(otherFileChunk?.[1] !== "page") return false;
+            return pageFileChunk[0] === otherFileChunk[0].replace("page.", "layout.");
+          })) continue;
           R = generatePageDefinition(getKey(relativePath), v);
         }else{
           R = generateEndpointDefinition(getKey(relativePath), v);
