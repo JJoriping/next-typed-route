@@ -12,7 +12,7 @@ export type NextTypedRoute<Req = DefaultRequestObject, Res = void> = (
   req:Omit<NextRequest, 'json'|'nextUrl'>&{
     'json': () => Promise<Req extends { 'body': infer R } ? R : never>,
     'nextUrl': Omit<NextURL, 'searchParams'>&{
-      'searchParams': Req extends { 'query': TypedURLSearchParams<infer R> } ? TypedURLSearchParams<R> : never
+      'searchParams': Req extends { 'query': infer R extends string } ? TypedURLSearchParams<R> : never
     }
   },
   params:Record<string, string|string[]>
