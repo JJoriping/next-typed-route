@@ -28,7 +28,8 @@ export function initialize(rootPath:string):void{
  * Generates type definitions for pages
  * @param key Route key
  * @param path File path
- * @returns Generated type definition string or undefined
+ * @returns Generated type definition string, or undefined if:
+ * - The default export format is invalid
  */
 export function generatePageDefinition(key:string, path:string):string|undefined{
   const R = [
@@ -85,7 +86,9 @@ export function generatePageDefinition(key:string, path:string):string|undefined
  * Generates type definitions for API endpoints
  * @param key Route key
  * @param path File path
- * @returns Generated type definition string or undefined
+ * @returns Generated type definition string, or undefined if:
+ * - No valid HTTP method exports are found
+ * - The exports are not valid variable declarations
  */
 export function generateEndpointDefinition(key:string, path:string):string|undefined{
   const R = [
