@@ -4,6 +4,7 @@ import { getParametersType } from "./core.js";
 
 test("getParametersType()", () => {
   assert.strictEqual(getParametersType('foo'), 'unknown');
+  assert.strictEqual(getParametersType('foo/bar'), 'unknown');
   assert.strictEqual(getParametersType('app/blog/[slug]'), '{\'slug\':string|typeof emptyParamSymbol}');
   assert.strictEqual(getParametersType('app/shop/[...slug]'), '{\'slug\':string[]}');
   assert.strictEqual(getParametersType('app/shop/[[...slug]]'), '{\'slug\'?:string[]}');
