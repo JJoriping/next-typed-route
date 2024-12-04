@@ -12,7 +12,7 @@ const envFilePattern = /^\.env(\..+)?$/;
 export default class NextTypedRoutePlugin{
   public apply(compiler:Compiler):void{
     if(compiler.options.name !== 'server') return;
-    const nextTypesPlugin = compiler.options.plugins.find(v => v instanceof NextTypesPlugin) as NextTypesPlugin|undefined;
+    const nextTypesPlugin = compiler.options.plugins.find(v => v?.constructor.name === "NextTypesPlugin") as NextTypesPlugin|undefined;
     if(!nextTypesPlugin) throw Error('Missing NextTypesPlugin in compiler.options.plugins');
     const routerType = existsSync(nextTypesPlugin.appDir) ? "appDir" : "pagesDir";
     const dir = nextTypesPlugin[routerType];

@@ -6,10 +6,10 @@ import dotenv from "dotenv";
 import { dynamicSegmentPatterns } from "./constants.js";
 
 const appRouterKeywords = [ "GET", "HEAD", "POST", "PUT", "DELETE", "PATCH", "OPTIONS" ];
-const typeTextPattern = /@daldalso\/next-typed-route\b/;
+// NOTE https://github.com/dsherret/ts-morph/issues/644
+const typeTextPattern = /\b(NextTypedPage|NextTypedLayout|NextTypedRoute)\b/;
 
 let project:Project;
-
 
 /**
  * Initializes the project
@@ -21,7 +21,7 @@ export function initialize(rootPath:string):void{
   if(!existsSync(tsConfigFilePath)){
     throw Error(`Could not find tsconfig.json: ${rootPath}`);
   }
-  project = new Project({ tsConfigFilePath });
+  project = new Project({ useInMemoryFileSystem: true, skipLoadingLibFiles: true });
 }
 
 /**
@@ -36,7 +36,7 @@ export function generatePageDefinition(key:string, path:string):string{
     "import type { StaticPathFormOf } from \"@daldalso/next-typed-route\";"
   ];
   const parametersType = getParametersType(key);
-  const file = project.addSourceFileAtPath(path);
+  const file = project.createSourceFile(path, readFileSync(path).toString());
   let accepted = false;
 
   for(const v of file.getImportDeclarations()){
@@ -95,7 +95,7 @@ export function generateEndpointDefinition(key:string, path:string):string|undef
     "import type { Endpoint, emptyParamSymbol } from \"@daldalso/next-typed-route\";"
   ];
   const parametersType = getParametersType(key);
-  const file = project.addSourceFileAtPath(path);
+  const file = project.createSourceFile(path, readFileSync(path).toString());
   let accepted = false;
 
   for(const v of file.getImportDeclarations()){
