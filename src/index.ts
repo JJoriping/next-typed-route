@@ -15,7 +15,7 @@ export type NextTypedRoute<Req = DefaultRequestObject, Res = void> = (
       'searchParams': Req extends { 'query': infer R extends string } ? TypedURLSearchParams<R> : never
     }
   },
-  params:Record<string, string|string[]>
+  { params }:{ 'params': Record<string, string|string[]> }
 ) => NextResponse<Res>|Promise<NextResponse<Res>>;
 // NOTE params and searchParams become Promise instances since Next.js 15!
 export type NextTypedPage<Page extends keyof NextPageTable, Q extends string = never, P = {}> = (props:P&{

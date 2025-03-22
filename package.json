@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@daldalso/next-typed-route",
-  "version": "0.9.2-1",
+  "version": "0.9.2-2",
   "description": "Type-safe API call and routing library for Next.js",
   "repository": {
     "url": "git+https://github.com/JJoriping/next-typed-route.git"
