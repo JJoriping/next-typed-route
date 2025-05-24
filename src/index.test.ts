@@ -25,7 +25,8 @@ test("callRawAPI()", async t => {
       r1: "1",
       r2: [],
       r3: [ "2", "3" ],
-      o1: "4"
+      o1: "4",
+      foo: undefined
     },
     options: {
       host: "http://localhost"

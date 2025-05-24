@@ -84,7 +84,7 @@ export function callRawAPI<T extends keyof NextEndpointTable>(path:T, ...args:Ca
   const requestObject = args[0] as Record<string, any>|undefined;
   const { host, ...fetchOptions } = requestObject?.['options'] as CallAPIOptions || {};
   const params = requestObject?.['params'] as Record<string, string|string[]|undefined>|undefined;
-  const query = requestObject?.['query'] as Record<string, string[]>|undefined;
+  const query = requestObject?.['query'] as Record<string, string|string[]|undefined>|undefined;
   const body = requestObject?.['body'];
 
   if(params){
@@ -105,6 +105,7 @@ export function callRawAPI<T extends keyof NextEndpointTable>(path:T, ...args:Ca
   if(query){
     const searchParams = new URLSearchParams();
     for(const [ k, v ] of Object.entries(query)){
+      if(v === undefined) continue;
       if(typeof v === "string"){
         searchParams.append(k, v);
       }else for(const w of v){
