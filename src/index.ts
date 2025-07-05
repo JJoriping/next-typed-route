@@ -19,7 +19,8 @@ export type NextTypedRoute<Req = DefaultRequestObject, Res = void> = (
 ) => NextResponse<Res>|Promise<NextResponse<Res>>;
 // NOTE params and searchParams become Promise instances since Next.js 15!
 export type NextTypedPage<Page extends keyof NextPageTable, Q extends string = never, P = {}> = (props:P&{
-  'params': NoSymbolOf<NextPageTable[Page]['params']>
+  'params': NoSymbolOf<NextPageTable[Page]['params']>,
+  'searchParams': TypedURLSearchParams<Q>
 }) => ReactNode;
 export type NextTypedLayout<Page extends keyof NextPageTable> = (props:{
   'params': NoSymbolOf<NextPageTable[Page]['params']>,
