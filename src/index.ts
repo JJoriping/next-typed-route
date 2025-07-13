@@ -2,15 +2,16 @@
 import type { NextURL } from "next/dist/server/web/next-url.js";
 import type { NextRequest, NextResponse } from "next/server.js";
 import type { ReactNode } from "react";
-import type { CallAPIOptions, DefaultRequestObject, CallAPIArgumentsOf, PageArgumentsOf } from "./types.js";
+import type { CallAPIOptions, DefaultRequestObject, CallAPIArgumentsOf, PageArgumentsOf, QueryObjectOf } from "./types.js";
 import { dynamicSegmentPatterns } from "./constants.js";
 
 type NoSymbolOf<T> = {
   [key in keyof T]: Exclude<T[key], symbol>
 };
 export type NextTypedRoute<Req = DefaultRequestObject, Res = void> = (
-  req:Omit<NextRequest, 'json'|'nextUrl'>&{
+  req:Omit<NextRequest, 'json'|'nextUrl'|'formData'>&{
     'json': () => Promise<Req extends { 'body': infer R } ? R : never>,
+    'formData': () => Promise<Req extends { 'body': TypedFormData<infer R> } ? TypedFormData<R> : never>,
     'nextUrl': Omit<NextURL, 'searchParams'>&{
       'searchParams': Req extends { 'query': infer R extends string } ? TypedURLSearchParams<R> : never
     }
@@ -20,7 +21,7 @@ export type NextTypedRoute<Req = DefaultRequestObject, Res = void> = (
 // NOTE params and searchParams become Promise instances since Next.js 15!
 export type NextTypedPage<Page extends keyof NextPageTable, Q extends string = never, P = {}> = (props:P&{
   'params': NoSymbolOf<NextPageTable[Page]['params']>,
-  'searchParams': TypedURLSearchParams<Q>
+  'searchParams': QueryObjectOf<Q>
 }) => ReactNode;
 export type NextTypedLayout<Page extends keyof NextPageTable> = (props:{
   'params': NoSymbolOf<NextPageTable[Page]['params']>,
@@ -36,6 +37,14 @@ export interface TypedURLSearchParams<T extends string>{
   get(name:Exclude<T, `${string}[]`|`${string}?`>):string;
   get(name:T extends `${infer R}?` ? R : never):string|null;
   getAll(name:T extends `${infer R}[]` ? R : never):string[];
+}
+export interface TypedFormData<T extends string>{
+  get(name:Exclude<T, `${string}[]`|`${string}?`|`{${string}}`>):string;
+  get(name:Exclude<T extends `${infer R}?` ? R : never, `{${string}}`>):string|null;
+  get(name:T extends `{${infer R}}` ? R : never):File;
+  get(name:T extends `{${infer R}}?` ? R : never):File|null;
+  getAll(name:Exclude<T extends `${infer R}[]` ? R : never, `{${string}}`>):string[];
+  getAll(name:T extends `{${infer R}}[]` ? R : never):File[];
 }
 
 export const emptyParamSymbol = Symbol("Empty parameter");
@@ -83,10 +92,18 @@ export function callRawAPI<T extends keyof NextEndpointTable>(path:T, ...args:Ca
   let method:string, url:string|URL;
   [ method, url ] = (path as string).split(' ');
   const requestObject = args[0] as Record<string, any>|undefined;
-  const { host, ...fetchOptions } = requestObject?.['options'] as CallAPIOptions || {};
+  const { host, headers = {}, ...fetchOptions } = requestObject?.['options'] as CallAPIOptions || {};
   const params = requestObject?.['params'] as Record<string, string|string[]|undefined>|undefined;
   const query = requestObject?.['query'] as Record<string, string|string[]|undefined>|undefined;
-  const body = requestObject?.['body'];
+  const [ contentType, body ] = ((data:unknown) => {
+    if(data === undefined){
+      return [ undefined, undefined ];
+    }
+    if(data instanceof FormData){
+      return [ undefined, data ];
+    }
+    return [ 'application/json', JSON.stringify(data) ];
+  })(requestObject?.['body']);
 
   if(params){
     for(const [ k, v ] of Object.entries(params)){
@@ -118,9 +135,13 @@ export function callRawAPI<T extends keyof NextEndpointTable>(path:T, ...args:Ca
   if(host){
     url = new URL(url, host);
   }
+  if(contentType){
+    headers['Content-Type'] ||= contentType;
+  }
   return fetch(url, {
     method,
-    body: body && JSON.stringify(body),
+    headers,
+    body,
     ...fetchOptions
   });
 }
