@@ -1,6 +1,24 @@
 import assert from "node:assert";
 import test from "node:test";
+import type { NextRequest } from "next/server.js";
+import { NextResponse } from "next/server.js";
+import type { NextTypedRoute } from "./index.js";
 import { callRawAPI, emptyParamSymbol as emptyParameterSymbol, page } from "./index.js";
+
+declare const typeCastTest:NextTypedRoute;
+const typeTest:NextTypedRoute<{
+  'body': string
+}> = async req => {
+  const x = await req.json();
+
+  console.log(Date.parse(x));
+
+  return new NextResponse();
+};
+console.log(
+  typeTest,
+  typeCastTest as (req:NextRequest, { params }:{ 'params': Record<string, string|string[]> }) => Promise<NextResponse>
+);
 
 // declare module "./index.js"{
 //   interface NextEndpointTable{

@@ -8,13 +8,16 @@ import { dynamicSegmentPatterns } from "./constants.js";
 type NoSymbolOf<T> = {
   [key in keyof T]: Exclude<T[key], symbol>
 };
+type NeverToUnknown<T> = T extends never ? unknown : T;
+interface AugmentedNextURL<T extends string> extends NextURL{
+  searchParams:TypedURLSearchParams<T>;
+}
+
 export type NextTypedRoute<Req = DefaultRequestObject, Res = void> = (
   req:Omit<NextRequest, 'json'|'nextUrl'|'formData'>&{
-    'json': () => Promise<Req extends { 'body': infer R } ? R : never>,
+    'json': () => Promise<NeverToUnknown<(Req extends { 'body': infer R } ? R : never)>>,
     'formData': () => Promise<Req extends { 'body': TypedFormData<infer R> } ? TypedFormData<R> : never>,
-    'nextUrl': Omit<NextURL, 'searchParams'>&{
-      'searchParams': Req extends { 'query': infer R extends string } ? TypedURLSearchParams<R> : never
-    }
+    'nextUrl': AugmentedNextURL<Req extends { 'query': infer R extends string } ? R : never>
   },
   { params }:{ 'params': Record<string, string|string[]> }
 ) => NextResponse<Res>|Promise<NextResponse<Res>>;
@@ -33,12 +36,12 @@ export interface NextEndpointTable{}
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface NextPageTable{}
 export type Endpoint<Req, Res> = { 'req': Req, 'res': Res };
-export interface TypedURLSearchParams<T extends string>{
+export interface TypedURLSearchParams<T extends string> extends URLSearchParams{
   get(name:Exclude<T, `${string}[]`|`${string}?`>):string;
   get(name:T extends `${infer R}?` ? R : never):string|null;
   getAll(name:T extends `${infer R}[]` ? R : never):string[];
 }
-export interface TypedFormData<T extends string>{
+export interface TypedFormData<T extends string> extends FormData{
   get(name:Exclude<T, `${string}[]`|`${string}?`|`{${string}}`>):string;
   get(name:Exclude<T extends `${infer R}?` ? R : never, `{${string}}`>):string|null;
   get(name:T extends `{${infer R}}` ? R : never):File;
