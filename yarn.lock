@@ -55,10 +55,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@daldalso/logger@npm:^0.9.3-0":
-  version: 0.9.3-0
-  resolution: "@daldalso/logger@npm:0.9.3-0"
-  checksum: 10c0/af509afd3473d9ce56d275078bf497b634a5506977ae59e744cc13544780b4c26b62758ff611440a1dfb6e666960155f3a16bbda3a6c15524feb9f80f2d26ee2
+"@daldalso/logger@npm:^0.9.5":
+  version: 0.9.5
+  resolution: "@daldalso/logger@npm:0.9.5"
+  checksum: 10c0/27afa5df3e46ec3d38b5987274e2b329eaa9a0deda2b3a07a482ce0487d0b148805b646f7dacd6a78b3194cc46f7ec76100209378207df1c827306b186996cf0
   languageName: node
   linkType: hard
 
@@ -67,7 +67,7 @@ __metadata:
   resolution: "@daldalso/next-typed-route@workspace:."
   dependencies:
     "@daldalso/eslint-plugin": "npm:^1.2.3"
-    "@daldalso/logger": "npm:^0.9.3-0"
+    "@daldalso/logger": "npm:^0.9.5"
     "@types/node": "npm:^22.4.0"
     "@types/react": "npm:^18"
     dotenv: "npm:^16"
