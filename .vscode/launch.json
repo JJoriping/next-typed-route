@@ -9,6 +9,15 @@
         "<node_internals>/**"
       ],
       "args": [ "--test" ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "bin openapi",
+      "args": [
+        "dist/bin.js",
+        "openapi"
+      ]
     }
   ]
 }

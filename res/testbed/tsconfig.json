@@ -4,5 +4,10 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "strict": true
-  }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ]
 }
