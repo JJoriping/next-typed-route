@@ -1,8 +1,9 @@
 import type { NextEndpointTable, NextPageTable, TypedFormData } from "./index.js";
 
+// NOTE Next.js 16 does not allow `never`
 export type DefaultRequestObject = {
-  'query': never,
-  'body': never
+  'query': unknown,
+  'body': unknown
 };
 export type CallAPIOptions = Omit<RequestInit, 'method'|'headers'|'body'>&{
   'host'?: string,

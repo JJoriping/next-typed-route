@@ -21,7 +21,6 @@ test("NextTypedRoutePlugin", () => {
           dir: resolve("res/testbed"),
           distDir: resolve("dist"),
           isEdgeServer: false,
-          typedRoutes: false,
           pageExtensions: [],
           originalRedirects: undefined,
           originalRewrites: undefined

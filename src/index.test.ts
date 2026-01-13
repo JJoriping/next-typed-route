@@ -17,7 +17,7 @@ const typeTest:NextTypedRoute<{
 };
 console.log(
   typeTest,
-  typeCastTest as (req:NextRequest, { params }:{ 'params': Record<string, string|string[]> }) => Promise<NextResponse>
+  typeCastTest as (req:NextRequest, { params }:{ 'params': Promise<Record<string, string|string[]>> }) => Promise<NextResponse>
 );
 
 // declare module "./index.js"{

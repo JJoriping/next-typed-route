@@ -8,26 +8,25 @@ import { dynamicSegmentPatterns } from "./constants.js";
 type NoSymbolOf<T> = {
   [key in keyof T]: Exclude<T[key], symbol>
 };
-type NeverToUnknown<T> = T extends never ? unknown : T;
 interface AugmentedNextURL<T extends string> extends NextURL{
   searchParams:TypedURLSearchParams<T>;
 }
 
 export type NextTypedRoute<Req = DefaultRequestObject, Res = void> = (
   req:Omit<NextRequest, 'json'|'nextUrl'|'formData'>&{
-    'json': () => Promise<NeverToUnknown<(Req extends { 'body': infer R } ? R : never)>>,
-    'formData': () => Promise<Req extends { 'body': TypedFormData<infer R> } ? TypedFormData<R> : never>,
+    'json': () => Promise<Req extends { 'body': infer R } ? R : unknown>,
+    'formData': () => Promise<Req extends { 'body': TypedFormData<infer R> } ? TypedFormData<R> : FormData>,
     'nextUrl': AugmentedNextURL<Req extends { 'query': infer R extends string } ? R : never>
   },
-  { params }:{ 'params': Record<string, string|string[]> }
+  { params }:{ 'params': Promise<Record<string, string|string[]>> }
 ) => NextResponse<Res>|Promise<NextResponse<Res>>;
 // NOTE params and searchParams become Promise instances since Next.js 15!
 export type NextTypedPage<Page extends keyof NextPageTable, Q extends string = never, P = {}> = (props:P&{
-  'params': NoSymbolOf<NextPageTable[Page]['params']>,
-  'searchParams': QueryObjectOf<Q>
+  'params': Promise<NoSymbolOf<NextPageTable[Page]['params']>>,
+  'searchParams': Promise<QueryObjectOf<Q>>
 }) => ReactNode;
 export type NextTypedLayout<Page extends keyof NextPageTable> = (props:{
-  'params': NoSymbolOf<NextPageTable[Page]['params']>,
+  'params': Promise<NoSymbolOf<NextPageTable[Page]['params']>>,
   'children': ReactNode
 }) => ReactNode;
 
@@ -37,7 +36,8 @@ export interface NextEndpointTable{}
 export interface NextPageTable{}
 export type Endpoint<Req, Res> = { 'req': Req, 'res': Res };
 export interface TypedURLSearchParams<T extends string> extends URLSearchParams{
-  get(name:Exclude<T, `${string}[]`|`${string}?`>):string;
+  // Since we can't believe client input, `null` has been added.
+  get(name:Exclude<T, `${string}[]`|`${string}?`>):string|null;
   get(name:T extends `${infer R}?` ? R : never):string|null;
   getAll(name:T extends `${infer R}[]` ? R : never):string[];
 }

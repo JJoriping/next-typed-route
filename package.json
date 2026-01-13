@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@daldalso/next-typed-route",
-  "version": "0.9.8",
+  "version": "0.10.0",
   "description": "Type-safe API call and routing library for Next.js",
   "repository": {
     "url": "git+https://github.com/JJoriping/next-typed-route.git"
@@ -24,24 +24,27 @@
     "/res/next.d.ts",
     "!/dist/**/*.test.{d.ts,js}"
   ],
+  "bin": "./dist/bin.js",
   "devDependencies": {
     "@daldalso/eslint-plugin": "^1.2.3",
     "@types/node": "^22.4.0",
-    "@types/react": "^18",
+    "@types/react": "^19",
     "eslint": "^9.9.0",
-    "next": "^14",
-    "react": "^18.3.1",
+    "next": "^16",
+    "react": "^19",
     "typescript": "^5",
     "webpack": "^5.95.0"
   },
   "peerDependencies": {
-    "next": "^14"
+    "next": "^16"
   },
-  "packageManager": "yarn@4.5.0",
   "dependencies": {
     "@daldalso/logger": "^0.9.5",
+    "commander": "^14.0.2",
     "dotenv": "^16",
     "ts-morph": "^23.0.0",
-    "watcher": "^2.3.1"
+    "typescript-json-schema": "^0.65.1",
+    "watcher": "^2.3.1",
+    "yaml": "^2.8.1"
   }
 }
