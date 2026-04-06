@@ -2,21 +2,11 @@
 Type-safe API call and routing library for Next.js
 
 ## Getting Started
-1. `yarn add @daldalso/next-typed-route`
-2. Open your Next.js config file and add `NextTypedRoutePlugin` like below:
-   ```js
-    /** @type {import('next').NextConfig} */
-    const nextConfig = {
-      webpack: (config, context) => {
-        if(context.isServer){
-          config.plugins ??= [];
-          config.plugins.push(new NextTypedRoutePlugin());
-        }
-        return config;
-      }
-    };
-   ```
-3. `yarn dev` will run the plugin and make some type definitions.
+1. `pnpm add @daldalso/next-typed-route`
+2. Open your `tsconfig.json` and add `.next-typed-route/**.ts` to `include`.
+3. Use `npx next-typed-route --watch` for watching, or just `npx next-typed-route` for building.
+
+You may git-ignore the generated `.next-typed-route` directory.
 
 ## Usage
 ### Typed Page
